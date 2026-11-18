@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""make.fun entrypoint — deploy the bundled entry.jpg.
+"""make.fun entrypoint — deploy the bundled entry.png.
 
-Standard library only. Resolves entry.jpg next to this file (never the
+The image is a JPEG carried under the entry.png name, as the competition
+rules require (the file type is read from the first bytes, not the name).
+Standard library only. Resolves entry.png next to this file (never the
 process working directory), stages a copy in the output directory, checks
 it, makes it world-readable, and atomically renames it into place.
 """
@@ -12,7 +14,7 @@ import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(HERE, "entry.jpg")
+SOURCE = os.path.join(HERE, "entry.png")
 MAX_BYTES = 1048576
 
 
@@ -23,13 +25,13 @@ def fail(message):
 
 def main():
     if not os.path.isfile(SOURCE):
-        fail(f"bundled entry.jpg not found at {SOURCE}")
+        fail(f"bundled entry.png not found at {SOURCE}")
 
     source_size = os.path.getsize(SOURCE)
     if source_size == 0:
-        fail(f"bundled entry.jpg at {SOURCE} is empty")
+        fail(f"bundled entry.png at {SOURCE} is empty")
     if source_size > MAX_BYTES:
-        fail(f"bundled entry.jpg is {source_size} bytes, over the {MAX_BYTES} cap")
+        fail(f"bundled entry.png is {source_size} bytes, over the {MAX_BYTES} cap")
 
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     try:
@@ -37,9 +39,9 @@ def main():
     except OSError as exc:
         fail(f"cannot create output directory {out_dir}: {exc}")
 
-    destination = os.path.join(out_dir, "entry.jpg")
+    destination = os.path.join(out_dir, "entry.png")
 
-    fd, staged = tempfile.mkstemp(prefix=".entry-", suffix=".jpg", dir=out_dir)
+    fd, staged = tempfile.mkstemp(prefix=".entry-", suffix=".png", dir=out_dir)
     os.close(fd)
     try:
         shutil.copyfile(SOURCE, staged)

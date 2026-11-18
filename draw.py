@@ -2,7 +2,8 @@
 """THE DAILY ATLAS — front page for Tuesday 17 November 2026.
 
 Renders a 1024x1024 newspaper front page carrying 42 stories, applies a
-paper-texture pass, and writes entry.jpg next to this file.  Also renders
+paper-texture pass, and writes entry.png next to this file (JPEG bytes
+under the .png name, per the competition rules).  Also renders
 one procedural artwork panel (panels/proc-bahrain.png) at build time.
 """
 
@@ -16,7 +17,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
 PANELS = os.path.join(HERE, "panels")
-ENTRY = os.path.join(HERE, "entry.jpg")
+ENTRY = os.path.join(HERE, "entry.png")
 
 FONT_DIR = "/usr/share/fonts/truetype/dejavu/"
 SERIF_BOLD = FONT_DIR + "DejaVuSerif-Bold.ttf"
@@ -748,7 +749,9 @@ def main():
 
     quality = 90
     while True:
-        out.save(ENTRY, "JPEG", quality=quality)
+        # JPEG bytes under the entry.png name: the rules sniff the type from
+        # the first bytes, so the format must be stated explicitly.
+        out.save(ENTRY, format="JPEG", quality=quality)
         size = os.path.getsize(ENTRY)
         if size <= 1048576 or quality <= 40:
             break
@@ -756,14 +759,14 @@ def main():
 
     with open(ENTRY, "rb") as fh:
         blob = fh.read()
-    assert blob[:3] == b"\xff\xd8\xff", "entry.jpg is not a JPEG"
+    assert blob[:3] == b"\xff\xd8\xff", "entry.png is not a JPEG"
     with Image.open(ENTRY) as chk:
         assert chk.size == (1024, 1024), f"bad size {chk.size}"
-    assert len(blob) <= 1048576, f"entry.jpg too large: {len(blob)}"
+    assert len(blob) <= 1048576, f"entry.png too large: {len(blob)}"
 
     print(f"band_height={band_h} brief_size={BRIEF_SIZE[0]} quality={quality}")
-    print(f"entry.jpg bytes={len(blob)}")
-    print(f"entry.jpg sha256={hashlib.sha256(blob).hexdigest()}")
+    print(f"entry.png bytes={len(blob)}")
+    print(f"entry.png sha256={hashlib.sha256(blob).hexdigest()}")
 
 
 BRIEF_SIZE = [None]

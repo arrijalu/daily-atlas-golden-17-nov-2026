@@ -39,11 +39,13 @@ After the flat page is rendered, a paper-texture pass runs inside the same
 program on a float32 array: half-strength ink softening, low-frequency paper
 mottling, warm age blotches, band-pass fibre noise and print grain, all seeded
 from `numpy.random.default_rng(7)` so the output is byte-for-byte reproducible.
-The result is clipped, converted to uint8 and exported as `entry.jpg` at quality
-90 (dropping to 86, then 82, only if the 1 MiB cap demands it).
+The result is clipped, converted to uint8 and exported as `entry.png` at quality
+90 (dropping to 86, then 82, only if the 1 MiB cap demands it). The file holds
+JPEG bytes under the `entry.png` name, as the competition rules require — the
+grader tells the formats apart by the first bytes, not the extension.
 
 `main.py` is the submitted entrypoint and uses the standard library only. It
-resolves the bundled `entry.jpg` next to itself, stages a copy into
+resolves the bundled `entry.png` next to itself, stages a copy into
 `$MAKEFUN_OUTPUT_DIR` (default `/output`), verifies the byte count, sets the
 staged file to mode 644 so the grader can read it, and atomically renames it
 into place. It exits non-zero with a clear message if the bundled file is
@@ -54,7 +56,7 @@ missing.
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install pillow numpy
-.venv/bin/python draw.py          # writes entry.jpg and panels/proc-bahrain.png
+.venv/bin/python draw.py          # writes entry.png and panels/proc-bahrain.png
 
 # deploy the entry the way the grader does
 MAKEFUN_OUTPUT_DIR=/tmp/out python3 main.py
